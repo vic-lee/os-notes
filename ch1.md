@@ -1,5 +1,7 @@
-**2/6/19 — Transfer of Control, Syscall <key module, review this>**
+### 2/6/19 — Transfer of Control, Syscall <key module, review this>
+
 **System call**
+
 * Interface b/t user progs (user mode) and os 
 * **System call dispatcher (envelope)**: forward syscall to relevant os components 
 * On one hand: *~envelope~* (from user programs); on the other: *~interrupts~* (from hardware)
@@ -49,8 +51,9 @@
 	* Synchronous behavior (transfers from user => kernel => user; predictable)
 	* Next instructions executed by P follows TRAP (although other processes may execute *between TRAP and P’s next instruction*)
 
-**2/11/19**
+### 2/11/19 -- OS structure
 **Operating system structure**
+
 * **I. Monolithic structure — One big program**
 	* Structure 
 		* Main program that invokes requested service procedure 
