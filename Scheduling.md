@@ -2,6 +2,15 @@
 
 Module covered on 02/20/19
 
+### Table of contents
+
+- [What is scheduling](#what-is-scheduling)
+- [When to make scheduling decisions](#when-to-make-scheduling-decisions)
+- [Categories of scheduling algorithms](#categories-of-scheduling-algorithms)
+- [Goals of scheduling algorithms](#goals-of-scheduling-algorithms)
+- [Scheduling in batch systems](#scheduling-in-batch-systems)
+- [Scheduling in interactive systems](#scheduling-in-interactive-systems) 
+
 ### What is scheduling 
 
 - early computing: computer systems were monoprogrammed 
