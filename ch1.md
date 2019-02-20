@@ -55,39 +55,39 @@
 **Operating system structure**
 
 * **I. Monolithic structure — One big program**
-	* Structure 
-		* Main program that invokes requested service procedure 
-		* Service procedures that carry out syscalls 
-		* Utility procedures that help service procedures 
-	* Issue 
-		* Any bug in kernel mode may stop the OS from running 
+  * Structure 
+  	* Main program that invokes requested service procedure 
+  	* Service procedures that carry out syscalls 
+  	* Utility procedures that help service procedures 
+  * Issue 
+  	* Any bug in kernel mode may stop the OS from running 
 * **II. Layered System **
-	* Layers
-		* 5) The operator 
-		* 4) user programs 
-		* 3) I/O management 
-		* 2) Operator-process communication 
-		* 1) Memory and drum management
-		* 0) Processor allocation and multiprogramming 
-	* Idea / benefit 
-		* Separation of concerns: each layer does its own job and the other layers assume other layers are functional 
+  * Layers
+  	* 5) The operator 
+  	* 4) user programs 
+  	* 3) I/O management 
+  	* 2) Operator-process communication 
+  	* 1) Memory and drum management
+  	* 0) Processor allocation and multiprogramming 
+  * Idea / benefit 
+  	* Separation of concerns: each layer does its own job and the other layers assume other layers are functional 
 * **III. Micro kernels **
-	* Kernel should only handles 1) interrupts, 2) processes, 3) scheduling, 4) interprocess communication
-	* Pro: 
-		* Minimize kernel-space modules -> minimize crashes 
-		* Well defined modules: kernel does **~mechanism~**, user-space does **~policy~**
-	* Con: 
-		* Process switching is expensive (TRAP, state-saving, etc.)
+  * Kernel should only handles 1) interrupts, 2) processes, 3) scheduling, 4) interprocess communication
+  * Pro: 
+  	* Minimize kernel-space modules -> minimize crashes 
+  	* Well defined modules: kernel does **~mechanism~**, user-space does **~policy~**
+  * Con: 
+  	* Process switching is expensive (TRAP, state-saving, etc.)
 * **IV. Client-Server Model**
-	* For a distributed system (multiple machines)
+  * For a distributed system (multiple machines)
 * **VI. Virtual Machines (not part of this course, FYI)**
-	* Hypervisors (Virtual Machine Monitor (VMM)) to switch between multiple OSes 
-	* Type 1 vs. Type 2 Hypervisors 
-**The Model of Run Time**
+  * Hypervisors (Virtual Machine Monitor (VMM)) to switch between multiple OSes 
+  * Type 1 vs. Type 2 Hypervisors 
+  **The Model of Run Time**
 * **Text segment**: program code <immutable>
 * **Data segment**: 
-	* Starts with a certain size 
-	* Initialized with initial values 
-	* Grow under program control 
-* **Stack**: Initial zero, grows and shrinks based on function calls 
+  * Starts with a certain size 
+  * Initialized with initial values 
+  * Grow under program control 
+* **Stack**: Initial zero, grows and shrinks based on function calls
 
