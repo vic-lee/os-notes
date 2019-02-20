@@ -61,7 +61,7 @@ Module covered on 02/20/19
 2. respecting priority
 3. efficiency 
 4. low turnaround time
-5. High throughput 
+5. High throughput
 6. low response time 
 7. degrade gracefully under load
 
@@ -101,7 +101,7 @@ Note: *low turnaround time*:  every job coming in [submission] spend as little t
 
 ### Scheduling in interactive systems 
 
-#### Round robin 
+#### 1. Round robin 
 
 - Each process is assigned a CPU running time interval (referred to as <u>quantum</u>)
 - If the process uses up quantum
@@ -117,12 +117,30 @@ Note: *low turnaround time*:  every job coming in [submission] spend as little t
   -  Quantum too long
     - system is less responsive ==> poor responses to short interactive requests 
 
-#### Process sharing 
+#### 2. Process sharing 
 
 - merge the ready and running; permit all jobs to run at once
 - i.e. if there are N jobs in the queue
   - every job runs at a `1/N` speed (compared to its speed if it were running alone)
 - Theoretical (in reality one processor runs one process at a time)
+
+#### 3. Priority scheduling 
+
+#### 4. Selfish RR
+
+#### 5. Multiple queues
+
+#### 6. Shortest process next
+
+#### 7. Highest penalty radio next
+
+#### 8. Guaranteed scheduling 
+
+#### 9. Lottery scheduling 
+
+#### 10. Fair share scheduling 
+
+
 
 
 
