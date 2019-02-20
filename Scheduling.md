@@ -1,5 +1,7 @@
 # 2.4 Scheduling
 
+Module covered on 02/20/19
+
 ### What is scheduling 
 
 - early computing: computer systems were monoprogrammed 
@@ -63,7 +65,7 @@
 6. low response time 
 7. degrade gracefully under load
 
-Note: low turnaround time:  every job coming in [submission] spend as little time in the system as possible [termination]
+Note: *low turnaround time*:  every job coming in [submission] spend as little time in the system as possible [termination]
 
 ### Scheduling in batch systems
 
