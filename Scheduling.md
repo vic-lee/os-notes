@@ -2,7 +2,7 @@
 
 Module covered on 02/20/19
 
-### Table of contents
+## Table of contents
 
 - [What is scheduling](#what-is-scheduling)
 - [When to make scheduling decisions](#when-to-make-scheduling-decisions)
@@ -10,6 +10,8 @@ Module covered on 02/20/19
 - [Goals of scheduling algorithms](#goals-of-scheduling-algorithms)
 - [Scheduling in batch systems](#scheduling-in-batch-systems)
 - [Scheduling in interactive systems](#scheduling-in-interactive-systems) 
+
+## Notes 
 
 ### What is scheduling 
 
