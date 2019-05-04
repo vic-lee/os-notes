@@ -1,4 +1,4 @@
-# 3.3. Memory Management
+# 3. Memory Management
 
 ## Table of contents
 
