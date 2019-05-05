@@ -2,9 +2,11 @@
 
 ## Table of contents
 
-
-
-
+- [Intro to memory management](#intro-to-memory-management)
+- [Memory abstraction](#memory-abstraction)
+- [Replacement (Paging, PTE, virtual addresses, TLB)](#replacement)
+- [Page Replacement Algorithms](#page-replacement-algorithms)
+- [Demand paging systems design issues](#design-issues-for-demand-paging-systems)
 
 ## Intro to Memory Management 
 
