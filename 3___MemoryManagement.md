@@ -275,13 +275,58 @@ revisit…...
 
 ### Clock 
 
-### LRU
+![Clock PRA](static/clock-pra.png)
 
-### NFU
+- The pointer points to the oldest page (a simpler implementation of Second Chance (modified FIFO))
+- **Algorithm**
+  - if R = 0: evict the page (not recently used)
+  - else: (R = 1)
+    - set R to 0; advance to the next page
+
+### Least Recently Used (LRU)
+
+- When a page fault occurs, remove the page frame that has been unused for the longest time
+- Implementation:
+  - Either: Keep a timestamp on each PTE tracking when the latest reference time; when evicting, scan the entire page frame table to search for the least recently used one
+  - Or: Keep PTEs in a linked list in usage order (tail is least recently used), moving PTE that is referenced to the beginning of the list (according to textbook)
+- Why it's impractical in practice
+  - It is very costly to, for each memory reference, find the PTE in a list, update it, move it to the front. 
+
+### Not Frequently Used (NFU)
+
+- **Algorithm**
+  - Keep a software counter associated with each page
+  - At each clock interrupt, for each page, add R (0 or 1) to its counter
+  - Reset the R to 0
+  - At eviction, remove the page with the lowest count (least frequently used)
+- Issue:
+  - NFU does not distinguish between old and new references
+    - what if a page is just recently swapped in, so it has a relatively low counter value? It has a much higher probability of being swapped out
+    - what if there are pages that happen to be in the system for a long time (perhaps they were loaded in first)? Conceivably, their counter becomes higher and higher that it may never be removed
 
 ### Aging
+
+![Aging](static/aging-pra.png)
+
+- A modification of the NFU algorithm
+- **Algorithm**
+  - Keep an `n` bit counter for each page
+  - At each clock interrupt,
+    - 1) right shift the counter 1 bit
+    - 2) add R to the ***left*** most bit of the counter
+  - Evict the frame with the lowest counter value
+- Benefit: distinguishes old and new references by aging
+- Cost: NFU can keep track of 2^n intervals of history; aging can only track n.
+  - This, however, is a minor trade-off; say if n = 8 and the counter == 0 (it has not been referenced in 8 clock cycles), the page probably isn't that important
 
 ### Working set
 
 ### WSClock
 
+## Design issues for demand paging systems
+
+- **Thrashing**: OS is doing very little useful work because it spends a lot of time I/O due to page faults (e.g. spends more time paging than running)
+- **Global vs. local policy?**
+  - ***global policy*** means we consider all page frames for eviction (not only the frames associated with the process causing the page fault)
+  - ***local policy*** means we only evict pages associated with the process causing the page fault; this maintains the same number of pages for each process
+  - while local policy may bring about more consistent performances for each process, in general global policy performs better.
