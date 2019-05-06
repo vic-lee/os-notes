@@ -90,3 +90,15 @@ _**Shareable vs. dedicated device**_
 - Deamon has the exclusive permission to use the device
 - Data copied to a spooling directory; once finished, daemon writes back to the device
 
+## Disk hardware
+
+### Magnetic disks
+
+- RPM
+- Tracks per surface
+- Sectors per track (bit density)
+- Tracks per cylinder
+- Seek time: the time required to seek the desired cylinder
+  - overlapping seek
+- Rotational latency
+- Transfer rate: the rate at which data flow between drive and computer 

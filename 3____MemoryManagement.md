@@ -332,3 +332,11 @@ revisit…...
   - ***global policy*** means we consider all page frames for eviction (not only the frames associated with the process causing the page fault)
   - ***local policy*** means we only evict pages associated with the process causing the page fault; this maintains the same number of pages for each process
   - while local policy may bring about more consistent performances for each process, in general global policy performs better.
+
+### Page Fault Frequency (PFF)
+
+- PFF can be used to approximate the number of frames a process needs
+- PFF = #page faults / #references
+- When PFF is too low (too many frames), free some frames of this process; 
+- When PFF is too high (too little frames), add some frames to this process
+
