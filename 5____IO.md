@@ -102,3 +102,39 @@ _**Shareable vs. dedicated device**_
   - overlapping seek
 - Rotational latency
 - Transfer rate: the rate at which data flow between drive and computer 
+
+### Redundant Array of Inexpensive/Independent Disks (RAID)
+
+- a box full of disks as a single drive
+- RAID looks like a **Single Large Expensive Disk (SLED)** to the OS
+- RAID has different configurations (0-6 level)
+
+#### Level 0: Striping
+
+- no redundancy
+
+#### Level 1: Mirroring
+
+- True RAID: duplicate all the disks
+- on write: every strip is written twice (worse performance)
+- on read: either copy can be used (helps w/ distributing the load over more drives, up to twice as good)
+- great fault tolerance
+
+#### Parity and XOR
+
+- Parity helps check whether something goes wrong (e.g. if the data is corrupt)
+- A XOR B = C ==> A = C XOR B and ...
+
+#### Level 2: synchronized disks, bit interleaving, multiple hamming checksums disks
+
+- not used anymore 
+
+#### Level 3: Synchronized disks, bit interleaved, single parity disk (simplified L2)
+
+#### Level 4: Stripping + Parity Disk
+
+![L4](static/raid-l4.png)
+
+- if one of the disks go down, it can be recovered by the parity disk (PD) ad the rest of the disks
+- performs poorly for small updates (small update; but requires to compute XOR value)
+
