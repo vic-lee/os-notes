@@ -354,13 +354,14 @@ revisit…...
 | Small Page Size | Lower internal fragmentation | Higher IO overhead; bigger page table |
 
 ```
-overhead = ProcSize / PageSize * PTE size + PageSize / 2			// for large & small
-// the first term represents IO and space overhead; the smaller the page, the higher this is 
-// the second term represents internal fragmentation; the larger the page, the higher this is
+overhead = ProcSize / PageSize * PTE size + PageSize / 2		// for large & small
+// the 1st term represents IO and space overhead; the smaller the page, the higher this is 
+// the 2nd term represents internal fragmentation; the larger the page, the higher this is
 
-Minimizing this function, we find the formula for the optimal page size (considering only IO and internal fragmentation costs):
+Minimizing this function, we find the formula for the optimal page size 
+	(considering only IO and internal fragmentation costs):
 
-OptimalPageSize = (2 * ProcSize * PTESize)^0.5
+OptimalPageSize = SQRT(2 * ProcSize * PTESize)
 ```
 
 ## Implementation issues for demand paging system
