@@ -413,12 +413,50 @@ Revisit…...
 2. An assembly routine starts to save general registers and other volatile information to keep the OS from destroying them. The routine then calls the OS.
 3. The OS finds out a PF has occurred —> need to know the virtual address causing the fault. Either a register contains this address; or the OS fetches the instruction causing the fault, then parses for the address.
 4. Upon knowing the virtual address, the OS checks if the VA is valid and protection is consistent with the access. If not, the process is killed. If yes, the OS looks for a free frame. If no frame is free, PRA starts.
-5. If the page selected for eviction is dirty, the page is scheduled to be written to disk. A context switch happens, suspending the faulting process and letting another one run until the transfer is complete. The frame is marked as `busy` to prevent other processes from modifying it. 
+5. If the page selected for eviction is dirty, the page is scheduled to be written to disk. A context switch happens, blocking the faulting process and letting another one run until the transfer is complete. The frame is marked as `busy` to prevent other processes from modifying it. 
 6. Once the page is clean, the OS looks up for the needed page, and schedules a disk operation to bring it in. The faulting process is still suspended. 
 7. A disk interrupt notifies the OS that the page has arrived. The page table updates to include the page's location, and the frame is marked as `normal` (resume from `busy`).
 8. Reset the program counter to where the fault happened. 
-9. The faulting process is scheduled (in ready state); the OS returns to the assembly routine that called it. 
+9. The faulting process is scheduled (block —> ready); the OS returns to the assembly routine that called it. 
 10. The routine reloads the registers and other state information to continue execution, as if no PF had happened. 
 
+### Locking Pages in Memory
 
+- Consider a process that issued a syscall for I/O purposes: writing to a buffer within that process's address space
+- this process is `blocked` and another process is running; the other process may have a page fault
+- It is possible for the eviction frame to contain the first process's I/O buffer
+- **solution**: locking (pinning) a page that is engaged in I/O activity
 
+### Backing Store
+
+- The process needs to know where the disk address of its swapped partitions are
+  - while program text is fixed, the data portion can grow —> must be prepared to grow space on disk
+- Or, we can allocate nothing in advance; allocate only when a page is swapped out and deallocate when it is swapped in. 
+  - This requires tracking every page on disk (may need a disk map mapping)
+
+## Segmentation
+
+- a **segment** is an independent address space
+- segments have different sizes; they can grow and shrink during execution
+- Segments are visible to user-level programs; pages are not
+- Segments usually do not contain a mixture of types
+- Benefits of segmentation (why):
+  - to free programmers from managing expanding and contracting tables for the program (what if the symbol table turns out to be much larger than expected, and there's no space for expansion since it is followed by source text?)
+  - aid sharing and protection (a segment can be executable; a program can share 1 segment to another but keep the other segments private)
+  - faster compilation
+- Introduces ***external fragmentation***
+
+#### Addresses
+
+```
+[segment #][    Offset    ]			// offset < segmentLimit
+[segment #][page #][offset]			// segmentation + paging
+```
+
+- If segmentation + paging: 
+  - Each STE points to the page table for that segment
+  - the ***physical size*** of the segment is a multiple of the page size
+    - incurs internal fragmentation in the last page
+  - the ***logical size*** of the segment is the limit value in the STE
+  - Requires 3 memory references
+    - STE, PTE, memory reference
