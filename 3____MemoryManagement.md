@@ -340,3 +340,32 @@ revisit…...
 - When PFF is too low (too many frames), free some frames of this process; 
 - When PFF is too high (too little frames), add some frames to this process
 
+### Load Control
+
+- If PFF is too high, we can ***suspend*** some processes (lowering the level of multiprogramming)
+  - Swap these processes' frames back to disk to free some new frames, lowering PFF
+- if PFF is low, the suspended processes can resume
+
+### Page Size
+
+| | Benefits | Costs |
+|--- | -------- | ----- |
+| Large Page Size | Lower IO overhead | High internal fragmentation (1/2 page size) |
+| Small Page Size | Lower internal fragmentation | Higher IO overhead; bigger page table |
+
+```
+overhead = ProcSize / PageSize * PTE size + PageSize / 2			// for large & small
+// the first term represents IO and space overhead; the smaller the page, the higher this is 
+// the second term represents internal fragmentation; the larger the page, the higher this is
+
+Minimizing this function, we find the formula for the optimal page size (considering only IO and internal fragmentation costs):
+
+OptimalPageSize = (2 * ProcSize * PTESize)^0.5
+```
+
+## Implementation issues for demand paging system
+
+### Page Fault Handling (PFH)
+
+
+
