@@ -354,7 +354,7 @@ revisit…...
 | Small Page Size | Lower internal fragmentation | Higher IO overhead; bigger page table |
 
 ```
-overhead = ProcSize / PageSize * PTE size + PageSize / 2		// for large & small
+overhead = ProcSize / PageSize * PTESize + PageSize / 2		// for large & small
 // the 1st term represents IO and space overhead; the smaller the page, the higher this is 
 // the 2nd term represents internal fragmentation; the larger the page, the higher this is
 
