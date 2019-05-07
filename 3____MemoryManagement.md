@@ -449,14 +449,14 @@ Revisit…...
 #### Addresses
 
 ```
-[segment #][    Offset    ]			// offset < segmentLimit
-[segment #][page #][offset]			// segmentation + paging
+[ segment # ][      Offset      ]			// offset < segmentLimit
+[ segment # ][ page # ][ offset ]			// segmentation + paging
 ```
 
 - If segmentation + paging: 
   - Each STE points to the page table for that segment
   - the ***physical size*** of the segment is a multiple of the page size
-    - incurs internal fragmentation in the last page
+    - incurs ***internal fragmentation*** in the last page
   - the ***logical size*** of the segment is the limit value in the STE
   - Requires 3 memory references
     - STE, PTE, memory reference
