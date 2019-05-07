@@ -7,6 +7,8 @@
 - [Replacement (Paging, PTE, virtual addresses, TLB)](#replacement)
 - [Page Replacement Algorithms](#page-replacement-algorithms)
 - [Demand paging systems design issues](#design-issues-for-demand-paging-systems)
+- [Demand paging systems implementation issues](#implementation-issues-for-demand-paging-systems)
+- [Segmentation](#segmentation)
 
 ## Intro to Memory Management 
 
@@ -386,7 +388,7 @@ Revisit…...
   - the second hand is for ***PRA***
     - the likelihood of encountering a clean page increases b/c of paging daemon —> faster eviction
 
-## Implementation issues for demand paging system
+## Implementation issues for demand paging systems
 
 ### OS involvement w/ Demand Paging
 
