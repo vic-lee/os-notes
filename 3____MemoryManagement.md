@@ -361,9 +361,30 @@ overhead = ProcSize / PageSize * PTESize + PageSize / 2			// for large & small
 
 Minimizing this function, we find the formula for the optimal page size 
 	(considering only IO and internal fragmentation costs):
-
+ 
 OptimalPageSize = SQRT(2 * ProcSize * PTESize)
 ```
+
+### Shared Pages
+
+Revisit…...
+
+### Cleaning Policy (Paging Daemon)
+
+- Paging works best if there's an abundant supply of free frames available
+- **Paging daemon** is awakened periodically to ensure that:
+  - if too little frames are free, it evicts some pages using PRA
+  - if an evicted page is needed again before being being overwritten in the frame, the daemon can simply mark the frame as occupied
+  - all free frames are clean (un-modified); so the OS would not need to write to disk in a hurry if it runs short of free frames
+
+#### Implementation (in conjunction with PRA)
+
+- **A two-handed clock**
+  - the first hand is for ***paging daemons***
+    - if it points to a dirty page, it writes the page back to the disk
+    - if it points to a clean page, it is just advanced
+  - the second hand is for ***PRA***
+    - the likelihood of encountering a clean page increases b/c of paging daemon —> faster eviction
 
 ## Implementation issues for demand paging system
 
