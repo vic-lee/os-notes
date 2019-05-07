@@ -409,5 +409,16 @@ Revisit…...
 
 ### Page Fault Handling (PFH)
 
+1. The hardware traps to the kernel, saving the program counter on stack.
+2. An assembly routine starts to save general registers and other volatile information to keep the OS from destroying them. The routine then calls the OS.
+3. The OS finds out a PF has occurred —> need to know the virtual address causing the fault. Either a register contains this address; or the OS fetches the instruction causing the fault, then parses for the address.
+4. Upon knowing the virtual address, the OS checks if the VA is valid and protection is consistent with the access. If not, the process is killed. If yes, the OS looks for a free frame. If no frame is free, PRA starts.
+5. If the page selected for eviction is dirty, the page is scheduled to be written to disk. A context switch happens, suspending the faulting process and letting another one run until the transfer is complete. The frame is marked as `busy` to prevent other processes from modifying it. 
+6. Once the page is clean, the OS looks up for the needed page, and schedules a disk operation to bring it in. The faulting process is still suspended. 
+7. A disk interrupt notifies the OS that the page has arrived. The page table updates to include the page's location, and the frame is marked as `normal` (resume from `busy`).
+8. Reset the program counter to where the fault happened. 
+9. The faulting process is scheduled (in ready state); the OS returns to the assembly routine that called it. 
+10. The routine reloads the registers and other state information to continue execution, as if no PF had happened. 
+
 
 
