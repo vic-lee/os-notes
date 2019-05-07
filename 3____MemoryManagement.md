@@ -388,6 +388,25 @@ Revisit…...
 
 ## Implementation issues for demand paging system
 
+### OS involvement w/ Demand Paging
+
+- ***Process creation***	
+  - allocate memory for page table; allocate disk space for pages that are not in memory
+  - load a few pages from the process
+- ***Ready —> Running***
+  - MMU and TLB is reset to remove traces of previously executed processes
+  - Some hardware registers must be set to point to the page table for the active process
+- ***On page fault***
+  - 1) determine which viraddr causes the fault
+  - 2) find which page needs to be loaded from disk
+  - 3) find free frame OR evict a frame (PRA)
+  - 4) load the needed page into page frame
+  - 5) back up program counter to before the page fault; execute again
+- ***On process exit***
+  - if certain pages are shared with another process, the page cannot be released until all dependent processes are terminated
+  - release the page table
+  - release the swap area on disk
+
 ### Page Fault Handling (PFH)
 
 
