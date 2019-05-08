@@ -111,9 +111,14 @@ _**Shareable vs. dedicated device**_
 
 #### Level 0: Striping
 
-- no redundancy
+![raid-l0](static/raid-l0.png)
+
+- benefit: great throughput
+- downside: no redundancy
 
 #### Level 1: Mirroring
+
+![raid-l1](static/raid-l1.png)
 
 - True RAID: duplicate all the disks
 - on write: every strip is written twice (worse performance)
@@ -127,9 +132,13 @@ _**Shareable vs. dedicated device**_
 
 #### Level 2: synchronized disks, bit interleaving, multiple hamming checksums disks
 
+![raid-l2](static/raid-l2.png)
+
 - not used anymore 
 
 #### Level 3: Synchronized disks, bit interleaved, single parity disk (simplified L2)
+
+![raid-l3](static/raid-l3.png)
 
 #### Level 4: Stripping + Parity Disk
 
@@ -138,3 +147,20 @@ _**Shareable vs. dedicated device**_
 - if one of the disks go down, it can be recovered by the parity disk (PD) ad the rest of the disks
 - performs poorly for small updates (small update; but requires to compute XOR value)
 
+#### Level 5: Rotated parity
+
+![raid-l5](static/raid-l5.png)
+
+- goal: avoid bottleneck at the single parity disk b/c the parity disk is needed for every write operation
+  - the parity bits distributed uniformly over all the drives (like round-robin)
+- downside: if drive crashes, reconstructing is difficult
+
+#### Level 6: Level 5 w/ an additional parity block
+
+![raid-l6](static/raid-l6.png)
+
+- an additional parity block is used
+- data is stripped across the disk with two parity blocks
+- writes are more expensive b/c of parity calculations
+- reads have no performance penalty
+- more reliability
