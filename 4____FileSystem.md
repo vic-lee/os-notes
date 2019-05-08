@@ -2,6 +2,12 @@
 
 ## Table of contents
 
+- [Introduction to files](#introduction-to-files)
+- [Directories](#directories)
+- [File system implementation (partition, linked-list allocation, FAT, i-node, directories, symlinks, hardlinks)](#file-system-implementation)
+- [File system management & organization](#file-system-management-organization)
+- [Example file systems](#example-file-systems)
+
 ## Introduction to Files
 
 ### Requriements for files
