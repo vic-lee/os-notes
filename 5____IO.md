@@ -90,9 +90,11 @@ _**Shareable vs. dedicated device**_
 - Deamon has the exclusive permission to use the device
 - Data copied to a spooling directory; once finished, daemon writes back to the device
 
-## Disk hardware
+## Disks
 
-### Magnetic disks
+### Disk hardware
+
+#### Magnetic disks
 
 - RPM
 - Tracks per surface
@@ -103,20 +105,20 @@ _**Shareable vs. dedicated device**_
 - Rotational latency
 - Transfer rate: the rate at which data flow between drive and computer 
 
-### Redundant Array of Inexpensive/Independent Disks (RAID)
+#### Redundant Array of Inexpensive/Independent Disks (RAID)
 
 - a box full of disks as a single drive
 - RAID looks like a **Single Large Expensive Disk (SLED)** to the OS
 - RAID has different configurations (0-6 level)
 
-#### Level 0: Striping
+##### Level 0: Striping
 
 ![raid-l0](static/raid-l0.png)
 
 - benefit: great throughput
 - downside: no redundancy
 
-#### Level 1: Mirroring
+##### Level 1: Mirroring
 
 ![raid-l1](static/raid-l1.png)
 
@@ -125,29 +127,29 @@ _**Shareable vs. dedicated device**_
 - on read: either copy can be used (helps w/ distributing the load over more drives, up to twice as good)
 - great fault tolerance
 
-#### Parity and XOR
+##### Parity and XOR
 
 - Parity helps check whether something goes wrong (e.g. if the data is corrupt)
 - A XOR B = C ==> A = C XOR B and ...
 
-#### Level 2: synchronized disks, bit interleaving, multiple hamming checksums disks
+##### Level 2: synchronized disks, bit interleaving, multiple hamming checksums disks
 
 ![raid-l2](static/raid-l2.png)
 
 - not used anymore 
 
-#### Level 3: Synchronized disks, bit interleaved, single parity disk (simplified L2)
+##### Level 3: Synchronized disks, bit interleaved, single parity disk (simplified L2)
 
 ![raid-l3](static/raid-l3.png)
 
-#### Level 4: Stripping + Parity Disk
+##### Level 4: Stripping + Parity Disk
 
 ![L4](static/raid-l4.png)
 
 - if one of the disks go down, it can be recovered by the parity disk (PD) ad the rest of the disks
 - performs poorly for small updates (small update; but requires to compute XOR value)
 
-#### Level 5: Rotated parity
+##### Level 5: Rotated parity
 
 ![raid-l5](static/raid-l5.png)
 
@@ -155,7 +157,7 @@ _**Shareable vs. dedicated device**_
   - the parity bits distributed uniformly over all the drives (like round-robin)
 - downside: if drive crashes, reconstructing is difficult
 
-#### Level 6: Level 5 w/ an additional parity block
+##### Level 6: Level 5 w/ an additional parity block
 
 ![raid-l6](static/raid-l6.png)
 
@@ -164,3 +166,72 @@ _**Shareable vs. dedicated device**_
 - writes are more expensive b/c of parity calculations
 - reads have no performance penalty
 - more reliability
+
+### Disk Arm Scheduling Algorithms
+
+- **seek time** (time to move to the proper cylinder)
+- **rotational delay** (how long for the proper sector to come under the read-write head)
+- actual data transfer time (fast)
+
+DASA aim at reducing mean seek time (seek time and rotational delay are the two main factors). 
+
+#### FCFS
+
+- the disk driver accepts requests one at a time
+  - advantage:
+    - fair; no staravtion
+  - Disadvantage:
+    - seek time not optimized
+
+#### Pick
+
+- Same as FCFS but picks up requests for cylincers that are "on the way" to the *next* FCFS request.
+
+#### SSTF or SSF (Shortest Seek Time First)
+
+- Use the greedy algorithm to handle th eclosest next request to minimize seek time
+- trades off minimizing seek time with fairness
+  - Conceivably the arm can stay in one region for a long time (starving requests)
+  - cylinders in the middle receive better service
+
+#### Elevator
+
+##### Scan
+
+- one bit representing the current direction: UP or DOWN
+- the arm moves in that direction and handles requests in one direction until reaching the end of the disk; this is when the direction is reversed
+- still favors requests in the middle but doesn't starve requests
+
+##### Look
+
+- the arm moves in one direction until there's <u>no pending requests in that direction</u>; then the direction is reversed.
+
+#### N-step Scan
+
+- disk requests are serviced in batches
+- each batch processed using the Elevator Scan algorithm
+- while the disk is servicing a scan direction, the controller gathers new requests and sorts them
+- at the end of the current sweep, the new list becomes the current sweep
+
+#### Circular Elevator
+
+- go in one direction (UP or DOWN), once finished in one direction, start from the bottom. 
+  - e.g. 12 16 34 36 1 8
+
+### Track caching
+
+- seek and rotational delays dominate the performance, so reading one or two sectors at one time is very inefficient
+  - disk controllers cache multiple sectors (significant portions of the entire track)
+  - whlie in rotational delays, the controller cache the sectors passed through on the way
+  - this is completely independent of the OS cache
+
+### Error handling
+
+- bad sectors: do not correctly read back the value written to them
+- two approaches:
+  - deal w/ errors in the controller
+    - substitute bad sectors w/ one of the spares
+    - controller keeps track of the bad sectors
+  - deal w/ errors in the OS
+    - the OS remaps in software if the controller cannot do so
+
