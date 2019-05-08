@@ -263,3 +263,19 @@ Partition has a file system.
 - Removing the symlink has no effect on the underlying file
 - SymLink allows linking to a directory (while hardlink does not allow this)
   - If `A/SymLink` points to directory `B/`, and file `B/y` exists, then `A/SymLink/y` is equivalent to accessing `B/y`.
+
+### Journaling File Systems
+
+Keep a log of what is going to happen, so that when crashes happen we have a source to trace problems.
+
+Key steps:
+
+1. Write a log entry listing the action to be completed
+2. Ensure the log entry is written to disk
+3. Start executing sub-tasks
+4. Check that all sub-tasks are completed, then mark the entry as complete (the entry will eventually be erased)
+
+If the system crashes, the system checks if there are any pending operations; the system finishes the pending operations first, then returns to user.
+
+For journaling to work, the logged operations must be **idempotent** (can be repeated as often as necessary without harm)
+
