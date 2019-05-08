@@ -244,20 +244,22 @@ Partition has a file system.
   - in small directories: check one by one
   - in large directories: hashing, B-trees
 
+### Shared (multinamed) files (hardlinks & symlinks)
 
+#### HardLinks
 
-HardLinks:
-
+- multiple names for the same file has an <u>equal status</u>
 - filenames point to another i-node (not a new i-node associated with a new file).
 - Hard links can be created only for regular files, not directories.
 - If the underlying file is removed, the hardlink still points to the same file (and is still accessbile, but not accessible in its original directory)
 - If a file with the same name is created in the original file, the hardlink does not point to the new file; it still points to the old file (and can still modify it). Essentially, we have two files with the same name running in parallel.
 
-SymLinks:
+#### SymLinks
 
 - Create a new file for symlink (not a regular file), which entails a new i-node
-- if the underlying file is removed, the symlink becomes invalid
-- if the underlying file is replaced (first removed then added a new file with the same name) with a new file, the symlink refers to the new file
+  - the new file contains the ***name*** of the original file
+- if the underlying file is ***removed***, the symlink becomes invalid
+- if the underlying file is ***replaced*** (first removed then added a new file with the same name) with a new file, the symlink refers to the new file
 - Removing the symlink has no effect on the underlying file
 - SymLink allows linking to a directory (while hardlink does not allow this)
   - If `A/SymLink` points to directory `B/`, and file `B/y` exists, then `A/SymLink/y` is equivalent to accessing `B/y`.
