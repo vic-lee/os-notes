@@ -235,3 +235,20 @@ DASA aim at reducing mean seek time (seek time and rotational delay are the two 
   - deal w/ errors in the OS
     - the OS remaps in software if the controller cannot do so
 
+## Clock
+
+- Processes use either a separate timer or uses the system clock to update its running time
+  - Less accurate: when there’s an interrupt, the process is not *actually* running but it is counted in the timer.
+
+## Keyboard
+
+- a keyboard comes with an embedded microprocessor that communciates with the keyboard controller
+- an interrupt is generated when a key is struck and another generated when released
+  - up to the keyboard driver to keep track of each key's status (UP or DOWN)
+- Each time a key is pressed a *scan code* is put into an IO register 
+- driver determines upper, lower case and key combinations based on information from keyboard
+
+## Mouse
+
+- Hardware is only responsible for sending `delta_x, delta_y` and `btn_status`
+- "double click" is implemented by the software
