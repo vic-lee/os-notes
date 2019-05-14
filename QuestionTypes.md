@@ -28,8 +28,11 @@ Potential algorithms:
   - Favor the one with the earlier arrival time
   - Favor the one listed earlier in the input (if they have the same arrival time)
 
-`Turnaround time = Finish Time - Arrival Time     // note that arrival time is NOT start time`
-`Wait time: time in ready state     // Don't forget the wait time b/t arrival & first run`
+```
+Turnaround time = Finish Time - Arrival Time     // note that arrival time is NOT start time
+
+Wait time: time in ready state     // Don't forget the wait time b/t arrival & first run
+```
 
 _Example (sample midterm):_
 
@@ -307,6 +310,11 @@ Two types of questions:
 
 - Semaphores
 - Mutexes
-- The producer-consumer problem
-- The dining philosopher problem
-- The readers writers problem
+
+### The producer-consumer problem
+
+
+### The dining philosopher problem
+
+
+### The readers writers problem
