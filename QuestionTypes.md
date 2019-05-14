@@ -116,16 +116,102 @@ Notes:
 
 - Because the algorithm is non-preemptive, once P2 starts running at T=10 (because P0 & 1 are both blocked) it runs until it finishes
 
+### Difference between Shortest Process Next, Shortest Job First (SJF), and Shortest Remaining Time Next (SRTN)
+
+- **Shortest process next [non-preemptive]**: schedules based on the estimated time of a process; shortest process given highest priority
+  - `new estimate = A * old estimate + (1 - A) * last burst   // initial est. given; 1 < A < 1`
+- **Shortest job first [non-preemptive]**: when processes arrive, they come with their CPU time. Processes with the shortest runtime given priority.
+- **Shortest remaining time next [preemptive]**: When a new process arrives, its runtime (provided) is compared w/ the remaining runtime [runtime - time ran] of the current process. If new process has a shorter remaining time, the current process is preempted.
+
 ## Disk Scheduling Algorithms
 
 ## Page Replacement Algorithms (PRAs)
 
-### The differenc between Shortest Process Next, Shortest Job First (SJF), and Shortest Remaining Time Next (SRTN)
+1kb = 2^10 bytes
+1 byte = 2^3 bits
 
-- **Shortest process next**: schedules based on the estimated time of a process; shortest process given highest priority
-  - `new estimate = A * old estimate + (1 - A) * last burst   // initial est. given; 1 < A < 1`
-- **Shortest job first [non-preemptive]**: when processes arrive, they come with their runtime. Processes with the shortest runtime given priority.
-- **Shortest remaining time next [preemptive]**: When a new process arrives, its runtime (provided) is compared w/ the remaining runtime [runtime - time ran] of the current process. If new process has a shorter remaining time, the current process is preempted. 
+```
+NumPage = AddresseSpace / PageSize      // also NumPTE
+PageTableSize = NumPTE * PTESize
+```
+
+Question format:
+
+input: PRA, NumPageFrame, NumPage, ReferenceString
+output: NumPageFaults
+
+Solution:
+
+Implement a page frame table where # columns = NumPageFrame.
+At each page fault, record a new row indicating the page replaced, based on PRA. The page being replaced is the one directly above the incoming page.
+
+_example: Q28 Ch3:_
+
+If FIFO page replacement is used with four page frames and eight pages, how many page faults will occur with the reference string 0172 3271 03 if the four frames are initially empty? Now repeat this problem for LRU.
+
+_Do not confuse FIFO with LRU._
+
+_For FIFO:_
+
+**0**
+0 **1**
+0 1 **7**
+0 1 7 **2**
+**3** 1 7 2
+3 1 7 **0**
+
+6 faults.
+
+_For LRU:_
+
+**0**
+0 **1**
+0 1 **7**
+0 1 7 **2**
+**3** 1 7 2
+**0** 1 7 2
+0 1 7 **3**
+
+7 faults.
+
+### Difference between LRU and NRU
+
+- **LRU (least recently used)** simply keeps track of the times at which a page has been referenced lately (_alternatively, the scheduler can keep track of a linked list of all pages that moves a page to the end when referenced._) The one with the oldest latest reference time is the viction.
+- **NRU (not recently used)** is quite different from LRU, despite the similarity in their naming. Using R and M bits, the algorithm separates pages into 4 categories. The lowest numbered page from the first non-empty class is the viction. Below are the classes, in order of preference:
+  - Class 0:  R = 0, M = 0
+  - Class 1:  R = 0, M = 1
+  - Class 2:  R = 1, M = 0    // prefers recently R-ed to M-ed
+  - Class 3:  R = 1, M = 1    // last resort
+
+### Why is LRU not used in practice, and what algorithms have been proposed as an approximation for LRU
+
+The LRU is not used in practice because it is expensive: memory references happen very frequently, recording a timestamp _every time_ a reference occurs incurs a significant performance overhead.
+
+To approximate LRU, two algorithms have been proposed to keep track of reference recency. One is **NFU**, which counts a page's cumulative R (it adds the R bit and resets it every cycle). An issue with this algorithm is that it does not distinguish between old and new references, thereby discriminates against younger residents. Another is **Aging**, which addresses NFU's issue by evicting page frames with older references. 
+
+### Difference between NFU and NRU
+
+- **NFU (not frequently used)** attempts to evict based reference frequency. The algorithm approximates reference frequency by keeping track of the a page's sum of Rs. The page with the lowest total reference count is evicted.
+  - Aside: what is the issue with this algorithm?
+- **NRU (not recently used)** attempts to evict track of recency. It determines a page's reference recency based on its R and M bits (see above). Pages referenced recently but not modified is considered a more ideal resident than pages modified but not referenced recently.
+
+_**Note that total reference count does not equate to the sum of Rs**_. R == 1 merely indicates that a page has been referenced in a clock cycle; it could be referenced once or multiple times, and R does not record this information. 
+
+### What is the biggest issue with NFU and what algorithm attempts to address it
+
+The issue with NFU, which keeps track of each page's total R, is that it favors old residents and discriminates against new residents. Conceivably, page frames which have not been swapped out for a long time likely has a high total reference count, giving it a low priority level for eviction. New pages come and go (chosen for eviction), because every time a page fault occurs, it is difficult for the relatively new page to compete with the old page, given its long-standing record of memory references. This makes older pages' total references count even higher. The situation hence becomes a vicious cycle.
+
+**The aging PRA** copes with this issue. Instead of adding the R bit at every clock cycle, aging right shifts the counter and prepends the R bit, thereby giving most recent references a much higher weighting. While one of aging's compromises is that it can only look back `n` cycles (the length of the counter) while NFU looks back `2^n`, in practice, if a page has not been referenced in `n` cycles it probably is not that important.
+
+### Why would one prefer WSClock over the Working Set algorithm
+
+### Why is second-chance preferable to FIFO
+
+Second-chance provides a substantial improvement to FIFO because it tries to avoid evicting old page frames that are nonetheless referenced _recently_. Frames referenced recently are likely to be referenced again soon (the locality of reference), the thinking goes. 
+
+Specifically, second-chance checks whether the head of a FIFO queue of page frames satisfies R == 1. If so, the R bit is reset and the page placed at the end of the queue ("second chance": as if the page has just arrived). The page evicts the first R == 0 page frame it finds.
+
+## Deadlock Prevention -- Safety State & the Banker's Algorithm
 
 ## Virtual to Physical Address Translation
 
@@ -140,4 +226,4 @@ Two types of questions:
 - Mutexes
 - The producer-consumer problem
 - The dining philosopher problem
-- The ......
+- The readers writers problem
