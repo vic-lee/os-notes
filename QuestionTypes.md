@@ -311,10 +311,17 @@ Two types of questions:
 - Semaphores
 - Mutexes
 
-### The producer-consumer problem
+### The producer-consumer problem (the bounded-buffer problem)
 
+Consider a situation where two (or more) processes share the same buffer. When the producer detects the buffer is full, it goes to sleep until the consumer has removed one or more items, and notifies the producer. Similarly, when the consumer detects the buffer is empty, it goes to sleep until the producer has put in one or new items, and notifies the consumer.
+
+A race condition may occur. Consider if the consumer just read in (but has not tested) that the buffer is empty; then, at a clock interrupt the scheduler switches to the producer. The producer, seeing that the buffer is empty, produces one item and "wakes" the consumer (because the buffer is originally empty and the consumer presumably sleeping). Note that the consumer is not actually asleep, however, and the wake call does not affect the consumer. When the scheduler runs the consumer, it sees that the value it read in is 0 (which is no longer true), and goes to sleep. Eventually, the producer will fill up the buffer and go to sleep too. The 2 processes will sleep forever.
+
+The same race condition can be conceived for the consumer trying to wake a non-sleeping producer. Fundamental to solving this issue is the atomaticity of the test-and-set operations (test if the size is 0 or full; increment / decrement number of items).
+
+While hardware TSL locks can solve this issue, it requires busy-wait, which consumes significant CPU resources and is not entirely fault-proof (see the priority inversion problem). Semaphores have been proposed to solve the bounded-buffer problem.
 
 ### The dining philosopher problem
 
 
-### The readers writers problem
+### The readers-writers problem
