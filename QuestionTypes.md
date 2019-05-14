@@ -308,8 +308,46 @@ Two types of questions:
 
 ## List of Concepts and Explainers
 
-- Semaphores
-- Mutexes
+### Semaphores
+
+- **DOWN(S)** or **P(S)**:
+  - If the semaphore is greater than 0, it is decremented
+  - If the semaphore is 0, the process is put to `sleep` _without finishing the DOWN call_.
+- **UP(S)** or **V(S)**:
+  - increments the semaphore's value
+  - if there are processes _sleeping on_ the semaphore (i.e. incomplete DOWN calls), one of them is chosen at random to finish DOWN. Thus, upon finishing the semaphore will still be 0, but there's one less process sleeping.
+
+Operations on semaphores are **atomic**. Usually, `P(S)` and `V(S)` are implemented as system calls. When each call is initiated, the kernel temporarily disables interrupts, ensuring the atomicity of the operations.
+
+Aside:
+
+- _**sleep**_ is a system call that blocks the calling process, until another process wakes it up. 
+- _**wakeup**_ is another system call with one parameter: the process to be woken up.
+
+### Mutexes
+
+Mutex is a special type of semaphore (a binary semaphore) for achieving **mutual exclusion**. A mutex has two states: unlocked (0) and locked (any non-0 number).
+
+P(S) or DOWN(S) _**locks**_ the mutex if it is not already locked.
+V(S) or UP(S) _**unlocks**_ the mutex.
+
+Therefore, code achieving mutual exclusion resembles something like: 
+
+```c
+while (1)
+{
+  P(S);         // DOWN(S)
+  CS();
+  V(S);         // UP(S)
+  NCS();
+}
+```
+
+### What is `thread_yield` and in what situation may `thread_yield` be used
+
+In the event that a process attempts but fails to enter into a critical region (i.e. calling P(S) when the semaphore is 0), the calling process is put to sleep, until awakened later by V(S).
+
+`Thread_yield` is the thread equivalent for `sleep` for processes. When a thread runs P(S) and fails to enter, it calls `thread_yield` to give up its CPU time, allowing other threads to run. If `thread_yield` is not called, the process would be stuck on constantly checking the lock (busy-waiting).
 
 ### The producer-consumer problem (the bounded-buffer problem)
 
@@ -317,7 +355,7 @@ Consider a situation where two (or more) processes share the same buffer. When t
 
 A race condition may occur. Consider if the consumer just read in (but has not tested) that the buffer is empty; then, at a clock interrupt the scheduler switches to the producer. The producer, seeing that the buffer is empty, produces one item and "wakes" the consumer (because the buffer is originally empty and the consumer presumably sleeping). Note that the consumer is not actually asleep, however, and the wake call does not affect the consumer. When the scheduler runs the consumer, it sees that the value it read in is 0 (which is no longer true), and goes to sleep. Eventually, the producer will fill up the buffer and go to sleep too. The 2 processes will sleep forever.
 
-The same race condition can be conceived for the consumer trying to wake a non-sleeping producer. Fundamental to solving this issue is the atomaticity of the test-and-set operations (test if the size is 0 or full; increment / decrement number of items).
+The same race condition can be conceived for the consumer trying to wake a non-sleeping producer. Fundamental to solving this issue is the atomicity of the test-and-set operations (test if the size is 0 or full; increment / decrement number of items).
 
 While hardware TSL locks can solve this issue, it requires busy-wait, which consumes significant CPU resources and is not entirely fault-proof (see the priority inversion problem). Semaphores have been proposed to solve the bounded-buffer problem.
 
