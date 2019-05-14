@@ -403,7 +403,7 @@ void get_forks(int id)
 {
   down(&mutex);
   state[id] = HUNGRY;
-  test(id);      /* while test is a void func, s[i] acts as a ret val*/
+  test(id);      /* while test is a void func, s[i] acts as a ret val */
   up(&mutex);
   down(&s[i]);
 }
@@ -429,3 +429,7 @@ void test(int id)
 ```
 
 ### The readers-writers problem
+
+Consider databases. There can be multiple readers at once, but writers must have exclusive access to the database (not even readers are allowed). This is the readers-writers problem.
+
+To solve this issue, we place a semaphore on the database.
