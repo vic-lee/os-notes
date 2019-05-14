@@ -235,7 +235,7 @@ Specifically, second-chance checks whether the head of a FIFO queue of page fram
 
 A state is _**safe**_ if and only if there exists a sequence in which every process can request up to its maximum claim and terminate.
 
-Algorithm implementation:
+Banker's Algorithm implementation:
 
 - Implement three matrices: **CurrentResourceOwnership**, **MaxUnmetDemands**, and **ResourceAvailability**. For CurrentResourceOwnership and MaxUnmetDemands, the columns are resources and rows are processes.
 - While CurrentResourceOwnership != 0:
@@ -244,7 +244,57 @@ Algorithm implementation:
   - Else, there's no remaining process that can be satisfied by ResourceAvailability; break
 - Repeat this process for all possible entry points; remember, we only need _one_ successful sequence for the state to be safe
 
+Sample question (HW13):
 
+```
+    ResourceOwnership   Claim           MaxUnmetDemand  
+P1  1 0 2 1 1           1 1 2 1 1       0 1 0 0 0
+P2  2 0 1 1 1           2 2 2 1 1       0 2 1 0 0
+P3  1 1 0 1 0           2 1 3 1 0       1 0 3 0 0
+P4  1 1 1 1 0           1 1 2 2 1       0 0 1 1 1
+
+ResourceAvailability
+0 0 X 1 1
+```
+
+Solve for the smallest X for which there exists a safe state.
+
+1. Find the MaxUnmetDemand matrix, as written above.
+2. The only process whose MaxUnmetDemand can be satisfied is P4. X is at least 1.
+
+```
+ResourceAvailability:
+  0 0 1 1 1
++ 1 1 1 1 0
+= 1 1 2 2 1
+```
+
+3. Next satisfy P1, it is the only process that can be satisfied.
+
+```
+ResourceAvailability:
+  1 1 2 2 1
++ 1 0 2 1 1
+= 2 1 4 3 2
+```
+
+4. Next satisfy P3.
+
+```
+ResourceAvailability:
+  2 1 4 3 2
++ 1 1 0 1 0
+= 3 2 4 4 2
+```
+
+5. Finally, satisfy P2.
+
+```
+ResourceAvailability:
+  3 2 4 4 2
++ 2 0 1 1 1
+= 5 2 5 5 3
+```
 
 ## Virtual to Physical Address Translation
 
