@@ -215,7 +215,25 @@ Second-chance provides a substantial improvement to FIFO because it tries to avo
 
 Specifically, second-chance checks whether the head of a FIFO queue of page frames satisfies R == 1. If so, the R bit is reset and the page placed at the end of the queue ("second chance": as if the page has just arrived). The page evicts the first R == 0 page frame it finds.
 
+## Deadlock Recovery
+
+### Name the necessary conditions for a deadlock to occur
+
+1. **_Mutual exclusion_**: only one process can have access to a resource
+2. **_Hold & wait_**: a resource is allowed to request more resources when it already holds one
+3. **_Non-preemptive_**: the OS cannot preemptively take back a resource from a process
+4. **_Circular Wait_**: there exists a circular waiting list
+
+### How can we prevent / recover from a deadlock now that we know the 4 pre-conditions for deadlock
+
+1. For mutual exclusion: we allow multiple processes to access a resource at the same time. This is readily achievable for read-only resources (e.g. reading a file); for writing access, a spooling system such as that for the printer can be introduced.
+2. For hold & wait: processes must request _all_ the resource they need when they start. This is often not realistic because processes may not know what they need.
+3. For non-preemptive: we give OS the ability to take back a resource. This is often not realistic because it may not make sense for the OS to stop a process from using a resource at a random time.
+4. For circular wait: we order resources with a numerical code. Requests must be made in consistency with this order (e.g. if printer is 3 and disk is 11, then a process must always request printer first, then disk).
+
 ## Deadlock Prevention -- Safety State & the Banker's Algorithm
+
+A state is _**safe**_ if and only if there exists a sequence in which every process can request up to its maximum claim and terminate.
 
 ## Virtual to Physical Address Translation
 
