@@ -306,6 +306,52 @@ Two types of questions:
 1. VA --> [    Page Frame #    ][  Offset  ]
 2. VA --> [ Seg # ][ Page Frame #][ Offset ]
 
+_**Example (sample final)**_
+
+Assume a system has demand paging with a page size of 4000 bytes, but does NOT have segmentation. Assume all page table entries (PTEs) are 1 word (4 bytes) long. Also assume the system does NOT have a TLB (translation lookaside buffer).
+
+How large (in bytes) is the page table for a 64,000,000 byte process?
+
+```
+NumPages = AddrSpace / PageSize = 16,000
+PageTableSize = NumPages * PTESize = 16,000 * 4 = 64,000 bytes
+```
+
+Describe the actions that occur for a reference to byte 54321. Be sure to indicate any memory references that must occur and any I/O operations that might occur.
+
+```
+Offset = VirAddr % PageSize = 54321 % 4000 = 2321
+PageNumber = 54321 / 4000 = 13
+
+Go to the PageTable (memref), find the 13th entry.
+
+If the page is resident:
+  get page frame number.
+
+Else:
+  Block the process until I/O is complete.
+
+  If there is free frame:
+    Bring in the actual page from disk and write to a free frame.
+
+  Else:
+    Use PRA to find a victim to evict.
+    Once identified, see if the victim is dirty.
+
+    If dirty:
+      schedule the frame to be written to disk.
+
+    Bring in the actual page from disk; overwrite the victim.
+    
+  Go to the PageTable to update the PTE (frame number, is resident).
+  At this point we can calculate the PhyAddr.
+
+PhyAddr = PageFrameNumber * FrameSize + Offset
+Memref: access the physical address
+```
+
+D (5 points). Consider a computer with four page frames and a process with 8 pages. Assume the pages are referenced in the following order 6127372163. Which of these references will cause page faults if the LRU page replacement algorithm is used. Assume the 4 frames are initially invalid, i.e. contain no pages.
+
 ## List of Concepts and Explainers
 
 ### Semaphores
