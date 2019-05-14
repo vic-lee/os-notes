@@ -394,8 +394,10 @@ void philosopher(int id)
 }
 
 /**
- * If forks are acquired, up(&s[i]) would be called, unlocking the semaphore.
- * Else, this philosopher's semaphore is locked, and down(&s[i]) would block it.
+ * If forks are acquired:
+ *    up(&s[i]) would be called, unlocking the semaphore.
+ * Else:
+ *    the philosopher's semaphore is locked, and down(&s[i]) would block.
  */
 void get_forks(int id)
 {
