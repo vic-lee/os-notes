@@ -353,13 +353,77 @@ In the event that a process attempts but fails to enter into a critical region (
 
 Consider a situation where two (or more) processes share the same buffer. When the producer detects the buffer is full, it goes to sleep until the consumer has removed one or more items, and notifies the producer. Similarly, when the consumer detects the buffer is empty, it goes to sleep until the producer has put in one or new items, and notifies the consumer.
 
-A race condition may occur. Consider if the consumer just read in (but has not tested) that the buffer is empty; then, at a clock interrupt the scheduler switches to the producer. The producer, seeing that the buffer is empty, produces one item and "wakes" the consumer (because the buffer is originally empty and the consumer presumably sleeping). Note that the consumer is not actually asleep, however, and the wake call does not affect the consumer. When the scheduler runs the consumer, it sees that the value it read in is 0 (which is no longer true), and goes to sleep. Eventually, the producer will fill up the buffer and go to sleep too. The 2 processes will sleep forever.
+A race condition may occur. Consider if the consumer just read in (but has not tested) that the buffer is empty; then, at a clock interrupt the scheduler switches to the producer. The producer, seeing that the buffer is empty, produces one item and "wakes" the consumer (because the buffer is originally empty and the consumer presumably sleeping). Note that the consumer is not actually asleep, however, and the wake call does not affect the consumer. When the scheduler runs the consumer, it sees that the value it read in was 0 (which is no longer true), and goes to sleep. Eventually, the producer will fill up the buffer and go to sleep too. The 2 processes will sleep forever.
 
 The same race condition can be conceived for the consumer trying to wake a non-sleeping producer. Fundamental to solving this issue is the atomicity of the test-and-set operations (test if the size is 0 or full; increment / decrement number of items).
 
 While hardware TSL locks can solve this issue, it requires busy-wait, which consumes significant CPU resources and is not entirely fault-proof (see the priority inversion problem). Semaphores have been proposed to solve the bounded-buffer problem.
 
-### The dining philosopher problem
+### The dining philosophers problem
 
+Consider a situation wherein there are 5 (or n) philosophers who are either thinking or eating. Philosophers sit at a round table, and between each philosopher there is a fork (5 forks in total). Each philosopher needs 2 forks to eat.
+
+A deadlock may arise when every philosopher attempts to get their forks at the same time. If the procedure for acquiring forks are defined as 1) get left fork, 2) get right fork, each philsopher would acquire the left fork successfully, but they would be waiting for the right fork, which has been acquired by the philosopher to the right. This is a circular wait situation where every philosopher is waiting on another.
+
+A simple "hack" would be to randomize the time intervals between which each philosopher eats, thereby greatly minimizing the possibility that all philosophers eat at once. However, this is not fault-proof as deadlocks may still occur.
+
+Semaphores can solve the dining philosophers problem. A `mutex` is used for ensuring mutual exclusion for critical regions (getting and releasing forks), and a set of semaphores, one for each philosopher, is used to indicate whether a philosopher is "hungry" (attempted to get a fork but failed).
+
+The implementation is as follows:
+
+```c
+#define N 5
+#define EATING 1
+......
+
+typedef int semaphore;
+semaphore mutex;
+semaphore s[N];
+int state[N];
+
+
+void philosopher(int id)
+{
+  while (1)
+  {
+    think();
+    get_forks(id);
+    eat();
+    put_forks(id);
+  }
+}
+
+/**
+ * If forks are acquired, up(&s[i]) would be called, unlocking the semaphore.
+ * Else, this philosopher's semaphore is locked, and down(&s[i]) would block it.
+ */
+void get_forks(int id)
+{
+  down(&mutex);
+  state[id] = HUNGRY;
+  test(id);      /* while test is a void func, s[i] acts as a ret val*/
+  up(&mutex);
+  down(&s[i]);
+}
+
+void put_forks()
+{
+  down(&mutex);
+  state[id] = THINKING;
+  test(LEFT);
+  test(RIGHT);
+  up(&mutex);
+}
+
+void test(int id)
+{
+  if (state[i] == HUNGRY && 
+      state[LEFT] != EATING && 
+      state[RIGHT] != EATING)
+  {
+    up(&s[i]);
+  }
+}
+```
 
 ### The readers-writers problem
