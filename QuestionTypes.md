@@ -205,9 +205,13 @@ The issue with NFU, which keeps track of each page's total R, is that it favors 
 
 ### Why would one prefer WSClock over the Working Set algorithm
 
+Working Set refers to `W(k, t)` for any given process, where k is the number of most recent references and t is the current time. While the idea is great in theory, keeping track of the working set by updating it upon every memory reference is prohibitly expensive. One could imagine a system where the OS performs a right shift of a bit string of pages referenced when there's a new page referenced.
+
+WSClock is much less expensive because it does not require such right shifting. The algporithm approximates working sets by using time instead of K number of references: if a page is referenced more than 𝜏 time ago, it is outside of the working set.
+
 ### Why is second-chance preferable to FIFO
 
-Second-chance provides a substantial improvement to FIFO because it tries to avoid evicting old page frames that are nonetheless referenced _recently_. Frames referenced recently are likely to be referenced again soon (the locality of reference), the thinking goes. 
+Second-chance provides a substantial improvement to FIFO because it tries to avoid evicting old page frames that are nonetheless referenced _recently_. Frames referenced recently are likely to be referenced again soon (the locality of reference), the thinking goes.
 
 Specifically, second-chance checks whether the head of a FIFO queue of page frames satisfies R == 1. If so, the R bit is reset and the page placed at the end of the queue ("second chance": as if the page has just arrived). The page evicts the first R == 0 page frame it finds.
 
