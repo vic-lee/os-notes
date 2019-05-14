@@ -235,6 +235,17 @@ Specifically, second-chance checks whether the head of a FIFO queue of page fram
 
 A state is _**safe**_ if and only if there exists a sequence in which every process can request up to its maximum claim and terminate.
 
+Algorithm implementation:
+
+- Implement three matrices: **CurrentResourceOwnership**, **MaxUnmetDemands**, and **ResourceAvailability**. For CurrentResourceOwnership and MaxUnmetDemands, the columns are resources and rows are processes.
+- While CurrentResourceOwnership != 0:
+  - Find a row in MaxUnmetDemands that is < than ResourceAvailability
+    - pretend that row is finished by releasing its CurrentResourceOwnership to ResourceAvailability
+  - Else, there's no remaining process that can be satisfied by ResourceAvailability; break
+- Repeat this process for all possible entry points; remember, we only need _one_ successful sequence for the state to be safe
+
+
+
 ## Virtual to Physical Address Translation
 
 Two types of questions:
