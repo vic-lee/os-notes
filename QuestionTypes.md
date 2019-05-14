@@ -29,6 +29,7 @@ Potential algorithms:
   - Favor the one listed earlier in the input (if they have the same arrival time)
 
 `Turnaround time = Finish Time - Arrival Time     // note that arrival time is NOT start time`
+`Wait time: time in ready state`
 
 _Example (sample midterm):_
 
@@ -40,16 +41,48 @@ _Example (sample midterm):_
 
 If FCFS (this is non-preemptive):
 
-> Schedule: P0, P1, P2
+```
+TIME  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
+P0    X X X X X b b b b  b  b  b  b  b              X  X  X  X  X  DONE
+P1              X X X X  b  b  b  b  b  b                          X  X  X  X  X  X  X  DONE
+P2                       X  X  X  X  X  X  X  X  X  DONE
+```
 
-> P0 runs for 5 cycles, then blocks for 9 cycles, then runs for 10 - 5 = 5 cycles.
->   Runtime = 19. Finish time = 19. Wait time = 0. Turnaround time = 19.
-> 
-> P1 runs for 4 cycles, then blocks for 6 cycles, then runs for 11 - 4 = 7 cycles. 
->   Runtime = 17. Finish time = 36. Wait time = 19. Turnaround time = 32.
->
-> P2 runs for 9 cycles. 
->   Runtime = 9. Finish time = 45. Wait time = 36. Turnaround time = 41.
+|     | Finish time | Wait time | Turnaround time |
+| --- | ----------- | --------- | --------------- |
+| P0  | 23          | 10        | 23              |
+| P1  | 30          | 15        | 26              |
+| P2  | 18          | 0         | 26              |
+
+If RR (dependent var: quantum = 3):
+
+Sample _**mistake**_:
+```
+TIME  0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+P0    x x x x x b b b b b  b  b  b  b     x  x  x                    x  x
+P1              x x x         x  b  b  b  b  b  b  x  x  x                 x  x  x  x
+P2                    x x x      x  x  x                    x  x  x
+```
+
+Correct:
+```
+TIME  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
+P0    x x x x x b b b b  b  b  b  b  b     x  x  x           x  x
+P1              x x x          x  b  b  b  b  b  b                 x  x  x  x  x  x  x
+P2                    x  x  x     x  x  x           x  x  x
+```
+
+|     | Finish time | Wait time | Turnaround time |
+| --- | ----------- | --------- | --------------- |
+| P0  | 23          | 4         | 23              |
+| P1  | 30          | 8         | 26              |
+| P2  | 21          | 4         | 17              |
+
+Two mistakes:
+
+1. Time is not 0-indexed; we start from 1
+2. When a process becomes ready (from blocked), it is added to the **_end_** of the queue. That's why, at `t=19`, P0 switches to P2, not to P1 (P1 just finished IO and is added to the end of the list)
+
 
 ## Disk Scheduling Algorithms
 
