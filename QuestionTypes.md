@@ -128,6 +128,54 @@ Notes:
 
 ## Disk Scheduling Algorithms
 
+1. FCFS
+2. Pick
+3. SSTF or SSF
+4. Elevator (look, scan)
+5. N-step scan
+6. Circular elevator (circular scan, circular look)
+
+### What is the primary disadvantage of FCFS for DSA, and which algorithm improves this shortcoming
+
+Seek time cannot be optimised. Pick optimizes seek time somewhat by removing repetitive arm movements.
+
+### What is the primary drawback of SSTF (or SSF)
+
+Fairness is sacrificed. With SSTF the arm would tend to stay in the middle.
+
+_Sample question (HW25)_
+
+A local area network is used as follows. The user issues a system call to write data packets to the network. The operating system then **copies** the data to a kernel buffer. Then it **copies** the data to the network controller board. When all the bytes are safely inside the controller, they are sent over the network at a rate of _**10 megabits/sec**_. The receiving network controller _**stores each bit a microsecond**_ after it is sent. When the last bit arrives, the destination CPU is _**interrupted**_, and the kernel **copies** the newly arrived packet to a kernel buffer to inspect it. Once it has figured out which user the packet is for, the kernel **copies** the data to the user space. If we assume that each _**interrupt**_ and its associated processing takes 1 msec, that **packets are 1024 bytes** (ignore the headers), and that copying a byte takes 1 μsec, **what is the maximum rate at which one process can pump data to another**? Assume that the sender is blocked until the work is finished at the receiving side and an acknowledgment comes back. For simplicity, assume that the time to get the acknowledgment back is so small it can be ignored.
+
+```
+1 microsecond = 1/1,000 milisecond = 1/1,000,000 second
+
+package size = 1024 bytes = 2^10 bytes = 2^20 bits
+OTA data transfer rate = 10MB / sec = 10 * 2^20 bytes / sec = 10 * 2^30 bits / sec
+copy rate = 1 byte / microsecond = 1,000,000 bytes / second
+controller rate = 1 bit / microsecond = 1/2^10 byte / microsecond = 1,000,000 / 2^10 byte / second
+
+1. OS copies to kernel buffer
+2. copies to network controller board
+3. OTA
+4. store on receiving network controller
+5. interrupt
+6. kernel copies to buffer
+7. kernel copies to user space
+
+copy time = 2^10 / 1,000,000 secs
+
+controller storing on receiving server takes 2^20 microseconds = 2^20 / 1,000,000 seconds
+
+total time required = 4 * 2^10 / 1,000,000      // copy time
+                    + 0.002                     // interrupt
+                    + 1 / (10 * 2^10)           // OTA
+                    + 2^20 / 1,000,000          // controller
+                    = 0.004096 + 0.002 + 0.000098 + 1.048576
+                    = 1.05477
+
+```
+
 ## Page Replacement Algorithms (PRAs)
 
 1kb = 2^10 bytes
@@ -342,7 +390,7 @@ Else:
       schedule the frame to be written to disk.
 
     Bring in the actual page from disk; overwrite the victim.
-    
+
   Go to the PageTable to update the PTE (frame number, is resident).
   At this point we can calculate the PhyAddr.
 
