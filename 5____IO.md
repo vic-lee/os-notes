@@ -33,6 +33,12 @@ How does the controller talk with the disk?
   - Main memory can still be a bottleneck
   - However, communications on the bus is dramatically reduced (which is good)
 
+| IO Approaches              | Benefit                                                         | Costs                                                   |
+| -------------------------- | --------------------------------------------------------------- | ------------------------------------------------------- |
+| Programmed I/O             | Easiest to implement; busy-waiting is fine for embedded systems | CPU is tied up                                          |
+| Interrupt-driven I/O       | More efficient CPU usage than programmed IO                     | Inefficient to interrupt frequently; some CPU is wasted |
+| DMA (Direct Memory Access) | Only one interrupt needed                                       | DMA controller is much slower CPU                       |
+
 ### Software side
 
 Goals:
