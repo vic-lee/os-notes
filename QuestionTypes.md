@@ -394,7 +394,7 @@ Else:
   Go to the PageTable to update the PTE (frame number, is resident).
   At this point we can calculate the PhyAddr.
 
-PhyAddr = PageFrameNumber * FrameSize + Offset
+PhyAddr = (PageFrameNumber - 1) * FrameSize + Offset
 Memref: access the physical address
 ```
 
